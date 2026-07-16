@@ -1,0 +1,33 @@
+build:
+  maxIssues: 0
+config:
+  validation: true
+complexity:
+  LongMethod:
+    threshold: 220
+  LongParameterList:
+    functionThreshold: 12
+    constructorThreshold: 18
+    ignoreDefaultParameters: true
+  TooManyFunctions:
+    thresholdInFiles: 50
+    thresholdInClasses: 30
+    thresholdInInterfaces: 30
+    thresholdInObjects: 30
+    thresholdInEnums: 30
+  CyclomaticComplexMethod:
+    threshold: 30
+  ComplexCondition:
+    threshold: 8
+naming:
+  FunctionNaming:
+    functionPattern: "[a-zA-Z][a-zA-Z0-9]*"
+  MatchingDeclarationName:
+    active: false
+style:
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    maxLineLength: 220
+  UnusedPrivateMember:
+    allowedNames: "(_|ignored|expected|serialVersionUID)"
