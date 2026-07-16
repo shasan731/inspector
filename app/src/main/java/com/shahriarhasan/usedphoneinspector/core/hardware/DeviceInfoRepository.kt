@@ -57,7 +57,12 @@ class AndroidDeviceInfoRepository @Inject constructor(
         val memory = ActivityManager.MemoryInfo().also(activityManager::getMemoryInfo)
         val storage = StatFs(Environment.getDataDirectory().absolutePath)
         val windowManager = context.getSystemService(WindowManager::class.java)
-        val display = context.display ?: windowManager.defaultDisplay
+        @Suppress("DEPRECATION")
+        val display = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.display ?: windowManager.defaultDisplay
+        } else {
+            windowManager.defaultDisplay
+        }
         val mode = display.mode
         val metrics = context.resources.displayMetrics
         val cameraManager = context.getSystemService(CameraManager::class.java)
@@ -101,4 +106,3 @@ class AndroidDeviceInfoRepository @Inject constructor(
         )
     }
 }
-

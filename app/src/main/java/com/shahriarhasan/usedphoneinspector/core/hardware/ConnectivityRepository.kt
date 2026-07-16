@@ -67,7 +67,12 @@ class AndroidConnectivityRepository @Inject constructor(
         val connectivityManager = context.getSystemService(ConnectivityManager::class.java)
         val network = connectivityManager.activeNetwork
         val capabilities = network?.let(connectivityManager::getNetworkCapabilities)
-        val wifiInfo = capabilities?.transportInfo as? WifiInfo
+        val wifiInfo = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            capabilities?.transportInfo as? WifiInfo
+        } else {
+            @Suppress("DEPRECATION")
+            runCatching { wifiManager.connectionInfo }.getOrNull()
+        }
         return WifiSnapshot(
             available = packageManager.hasSystemFeature(PackageManager.FEATURE_WIFI),
             enabled = wifiManager.isWifiEnabled,
@@ -139,13 +144,20 @@ class AndroidConnectivityRepository @Inject constructor(
             trySend(BluetoothScanState.Error("PERMISSION_DENIED"))
         }
         awaitClose {
-            runCatching { adapter.cancelDiscovery() }
+            try {
+                adapter.cancelDiscovery()
+            } catch (_: SecurityException) {
+                // Permission may be revoked while discovery is active.
+            }
             runCatching { context.unregisterReceiver(receiver) }
         }
     }
 
     override fun cancelBluetoothScan() {
-        runCatching { bluetoothManager.adapter?.cancelDiscovery() }
+        try {
+            bluetoothManager.adapter?.cancelDiscovery()
+        } catch (_: SecurityException) {
+            // Cancellation is best effort when permission has been revoked.
+        }
     }
 }
-

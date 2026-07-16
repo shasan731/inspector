@@ -154,6 +154,7 @@ private fun FormField(
 @Composable
 private fun ImeiField(label: Int, value: String, onValueChange: (String) -> Unit) {
     val context = LocalContext.current
+    val clipboardLabel = stringResource(label)
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
@@ -164,7 +165,7 @@ private fun ImeiField(label: Int, value: String, onValueChange: (String) -> Unit
             Row {
                 IconButton(onClick = {
                     context.getSystemService(ClipboardManager::class.java)
-                        .setPrimaryClip(ClipData.newPlainText(context.getString(label), value))
+                        .setPrimaryClip(ClipData.newPlainText(clipboardLabel, value))
                 }) { Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.copy_imei)) }
                 IconButton(onClick = { onValueChange("") }) {
                     Icon(Icons.Default.Info, contentDescription = stringResource(R.string.clear))
@@ -197,4 +198,3 @@ private fun EnumMenu(label: String, value: String, entries: List<Pair<String, ()
         }
     }
 }
-

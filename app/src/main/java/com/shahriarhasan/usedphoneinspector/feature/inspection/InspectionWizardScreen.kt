@@ -25,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -147,6 +148,7 @@ fun InspectionWizardScreen(
 @Composable
 private fun TestContent(state: InspectionUiState, viewModel: InspectionViewModel) {
     val details = state.details ?: return
+    val battery by viewModel.battery.collectAsState()
     when (state.currentTest?.kind) {
         TestKind.DEVICE_INFO -> DeviceInformationScreen(viewModel.deviceInfo)
         TestKind.DISPLAY -> DisplayTestScreen(state.issues, viewModel::setIssues)
@@ -165,8 +167,8 @@ private fun TestContent(state: InspectionUiState, viewModel: InspectionViewModel
         )
         TestKind.VIBRATION -> VibrationTestScreen(viewModel.vibrationRepository) { viewModel.putReading("observation", it) }
         TestKind.SENSORS -> SensorTestScreen(viewModel.sensorRepository) { viewModel.putReading("change_detected", it.toString()) }
-        TestKind.CHARGING -> ChargingTestScreen(viewModel.battery.value)
-        TestKind.BATTERY -> BatteryInformationScreen(viewModel.battery.value)
+        TestKind.CHARGING -> ChargingTestScreen(battery)
+        TestKind.BATTERY -> BatteryInformationScreen(battery)
         TestKind.WIFI -> WifiTestScreen(viewModel.connectivityRepository.wifiSnapshot())
         TestKind.BLUETOOTH -> BluetoothTestScreen(
             viewModel.connectivityRepository.bluetoothSnapshot(),

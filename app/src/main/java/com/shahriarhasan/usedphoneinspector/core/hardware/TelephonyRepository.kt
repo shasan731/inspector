@@ -3,6 +3,7 @@ package com.shahriarhasan.usedphoneinspector.core.hardware
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
+import android.os.Build
 import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.core.content.ContextCompat
@@ -33,7 +34,17 @@ class AndroidTelephonyRepository @Inject constructor(
         val manager = context.getSystemService(TelephonyManager::class.java)
         val permission = ContextCompat.checkSelfPermission(context, Manifest.permission.READ_PHONE_STATE) ==
             PackageManager.PERMISSION_GRANTED
-        val slots = if (available) manager.activeModemCount.coerceAtLeast(1) else 0
+        val slots = if (available) {
+            val modemCount = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                manager.activeModemCount
+            } else {
+                @Suppress("DEPRECATION")
+                manager.phoneCount
+            }
+            modemCount.coerceAtLeast(1)
+        } else {
+            0
+        }
         return TelephonySnapshot(
             available = available,
             simSlotCount = slots,
@@ -47,4 +58,3 @@ class AndroidTelephonyRepository @Inject constructor(
         )
     }
 }
-
