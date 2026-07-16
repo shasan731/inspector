@@ -27,8 +27,8 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.PointerId
-import androidx.compose.ui.input.pointer.awaitPointerEvent
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -150,4 +150,3 @@ private fun TouchCanvas(
 private const val GRID_COLUMNS = 8
 private const val GRID_ROWS = 12
 private const val GRID_COUNT = GRID_COLUMNS * GRID_ROWS
-
