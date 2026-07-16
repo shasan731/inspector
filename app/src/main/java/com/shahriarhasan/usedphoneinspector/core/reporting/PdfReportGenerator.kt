@@ -48,7 +48,7 @@ object ReportFilename {
     }
 
     fun sanitize(value: String): String = Normalizer.normalize(value, Normalizer.Form.NFKC)
-        .replace(Regex("[^\\p{L}\\p{N}._-]+"), "_")
+        .replace(Regex("[^\\p{L}\\p{M}\\p{N}._-]+"), "_")
         .trim('_', '.', ' ')
         .take(50)
 }
