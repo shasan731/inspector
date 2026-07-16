@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.shahriarhasan.usedphoneinspector.core.model.InspectionDraft
 import com.shahriarhasan.usedphoneinspector.core.model.InspectionStatus
+import com.shahriarhasan.usedphoneinspector.core.model.TestCategory
 import com.shahriarhasan.usedphoneinspector.core.model.TestStatus
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
@@ -39,8 +40,10 @@ class RoomInspectionRepositoryTest {
         assertNotNull(details)
         assertEquals(15, details?.testResults?.size)
 
-        val first = requireNotNull(details).testResults.first()
-        repository.saveTestResult(id, first.testId, TestStatus.PASS, "checked")
+        val firstRequired = requireNotNull(details).testResults.first {
+            it.required && it.category !in setOf(TestCategory.IDENTITY, TestCategory.SELLER)
+        }
+        repository.saveTestResult(id, firstRequired.testId, TestStatus.PASS, "checked")
         val completed = repository.complete(id)
         assertEquals(InspectionStatus.COMPLETED, completed.status)
         assertNotNull(completed.reportId)
@@ -70,4 +73,3 @@ class RoomInspectionRepositoryTest {
         assertNotNull(result.exceptionOrNull())
     }
 }
-
